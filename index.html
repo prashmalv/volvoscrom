@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DASH Portal Training</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="player-wrapper">
+  <div class="player-header">
+    <div class="header-brand">DASH Portal Training</div>
+    <div class="header-tag">Interactive Learning</div>
+  </div>
+  <video id="video" width="100%" controls controlsList="nodownload noplaybackrate">
+    <source src="content/TestVolvoline.mp4" type="video/mp4">
+  </video>
+</div>
+
+<!-- Quiz Overlay -->
+<div id="quizOverlay" class="quiz-overlay">
+  <div class="quiz-card" id="quizCard">
+
+    <div class="quiz-header">
+      <div class="quiz-badge">
+        <div class="quiz-icon">?</div>
+        <span>Knowledge Check</span>
+      </div>
+      <div id="attemptIndicator" class="attempt-indicator"></div>
+    </div>
+
+    <div class="quiz-body">
+      <div id="questionNumber" class="question-number"></div>
+      <p id="questionText" class="question-text"></p>
+      <div id="optionsContainer" class="options-container"></div>
+    </div>
+
+    <div id="feedbackBanner" class="feedback-banner hidden"></div>
+
+    <div class="quiz-footer">
+      <button id="submitBtn" class="submit-btn" onclick="submitAnswer()" disabled>
+        Submit Answer
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<script src="scorm.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
