@@ -14,8 +14,8 @@ video.addEventListener("timeupdate", () => {
 // Each section: triggerTime (seconds), sectionStart (replay point), questions array
 const quizSections = [
   {
-    triggerTime: 45,
-    sectionStart: 0,      // fail hone par video 0s se replay
+    triggerTime: 67,        // 1:07
+    sectionStart: 0,
     questions: [
       {
         text: "After logging into the DASH Portal, where do you click to navigate to the Purchase Order section?",
@@ -30,9 +30,19 @@ const quizSections = [
     ]
   },
   {
-    triggerTime: 90,
-    sectionStart: 45,     // fail hone par video 45s se replay (Q1 ke baad se)
+    triggerTime: 93,        // 1:33 — Q2 + Q3 same section
+    sectionStart: 67,       // fail hone par 1:07 se replay
     questions: [
+      {
+        text: "When creating a New Purchase Order, which two fields must you fill in before saving?",
+        options: [
+          "Product Name & Quantity",
+          "SAP Order ID & Credit Check Status",
+          "Payment Term & Ship-To Address",
+          "Distributor Code & Order Amount"
+        ],
+        correctIndex: 2   // C – Payment Term & Ship-To Address
+      },
       {
         text: "What is the status of a Purchase Order immediately after it is created?",
         options: [
@@ -46,20 +56,69 @@ const quizSections = [
     ]
   },
   {
-    triggerTime: 135,
-    sectionStart: 90,     // fail hone par video 90s se replay (Q2 ke baad se)
+    triggerTime: 133,       // 2:13
+    sectionStart: 93,       // fail hone par 1:33 se replay
     questions: [
       {
-        text: "When creating a New Purchase Order, which two fields must you fill in before saving?",
+        text: "When adding products, you enter quantity in QTY (Cases). What happens when you press Enter?",
         options: [
-          "Product Name & Quantity",
-          "Payment Term & Ship-To Address"
+          "The product is removed from the list",
+          "The PO is automatically submitted",
+          "QTY (PCS) – quantity in pieces – is auto-calculated",
+          "A credit check is triggered immediately"
         ],
-        correctIndex: 1   // B – Payment Term & Ship-To Address
+        correctIndex: 2   // C – QTY (PCS) is auto-calculated
+      }
+    ]
+  },
+  {
+    triggerTime: 151,       // 2:31
+    sectionStart: 133,      // fail hone par 2:13 se replay
+    questions: [
+      {
+        text: "What action do you take to officially submit a completed Purchase Order?",
+        options: [
+          "Click 'Confirm Order'",
+          "Click 'Mark Status as Complete'",
+          "Click 'Save & New'",
+          "Click 'Submit to SAP'"
+        ],
+        correctIndex: 1   // B – Mark Status as Complete
+      }
+    ]
+  },
+  {
+    triggerTime: 190,       // 3:10
+    sectionStart: 151,      // fail hone par 2:31 se replay
+    questions: [
+      {
+        text: "If the Credit Check Status shows 'Credit Block', what will happen?",
+        options: [
+          "The SAP Order ID is generated with a warning",
+          "The PO is auto-cancelled after 24 hours",
+          "No SAP Order ID is generated; you must contact the support team",
+          "The system retries the credit check automatically"
+        ],
+        correctIndex: 2   // C – No SAP Order ID is generated
+      }
+    ]
+  },
+  {
+    triggerTime: 258,       // 4:18
+    sectionStart: 190,      // fail hone par 3:10 se replay
+    questions: [
+      {
+        text: "To view individual product/SKU details of a dispatched invoice, which navigation path should you follow?",
+        options: [
+          "Purchase Order → Add Products → View All",
+          "Orders → View All → Order Number → Invoice → Record ID → Opportunity ID → Products → View All",
+          "Home Page → Products → SKU Search → View Details",
+          "Purchase Order → SAP Details → Credit Check Status"
+        ],
+        correctIndex: 1   // B – Orders → View All → ...
       }
     ]
   }
-  // Add more sections here as needed
 ];
 
 // ─── State ───────────────────────────────────────────────────────

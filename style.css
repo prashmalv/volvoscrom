@@ -20,6 +20,33 @@ body {
   padding: 28px 16px;
 }
 
+/* ── Top Bar ──────────────────────────────────── */
+.top-bar {
+  width: 82%;
+  max-width: 960px;
+  padding: 14px 0 10px;
+  display: flex;
+  align-items: center;
+}
+
+.top-logo {
+  height: 42px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* ── Course Heading ───────────────────────────── */
+.course-heading {
+  width: 82%;
+  max-width: 960px;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--dark-blue);
+  margin: 6px 0 18px;
+  letter-spacing: 0.3px;
+}
+
 /* ── Video Player ─────────────────────────────── */
 .player-wrapper {
   width: 82%;
