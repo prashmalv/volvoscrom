@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DASH Portal Training</title>
+  <title>DASH Portal Training – Completion Test</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -16,7 +16,7 @@
 
 <div class="player-wrapper" id="playerWrapper">
 
-  <!-- Thank You screen covers entire player-wrapper including header -->
+  <!-- Thank You screen -->
   <div id="thankYouScreen" class="thankyou-screen hidden">
     <div class="thankyou-card">
       <div class="thankyou-icon">✓</div>
@@ -49,45 +49,14 @@
   </div>
 
   <div class="video-container">
-
-    <video id="video" width="100%" controls playsinline
-      controlsList="nodownload noplaybackrate nofullscreen">
-      <source src="content/Valvoline_How to create a purchase orderV1_web.mp4" type="video/mp4">
+    <video id="video" width="100%" controls playsinline>
+      <source src="content/test_video_web.mp4" type="video/mp4">
     </video>
+  </div>
 
-    <!-- Quiz Overlay inside video-container -->
-    <div id="quizOverlay" class="quiz-overlay">
-      <div class="quiz-card" id="quizCard">
-
-        <div class="quiz-header">
-          <div class="quiz-badge">
-            <div class="quiz-icon">?</div>
-            <span>Knowledge Check</span>
-          </div>
-          <div id="attemptIndicator" class="attempt-indicator"></div>
-        </div>
-
-        <div class="quiz-body">
-          <div id="questionNumber" class="question-number"></div>
-          <p id="questionText" class="question-text"></p>
-          <div id="optionsContainer" class="options-container"></div>
-        </div>
-
-        <div id="feedbackBanner" class="feedback-banner hidden"></div>
-
-        <div class="quiz-footer">
-          <button id="submitBtn" class="submit-btn" onclick="submitAnswer()" disabled>
-            Submit Answer
-          </button>
-        </div>
-
-      </div>
-    </div>
-
-  </div><!-- end video-container -->
 </div>
 
 <script src="scorm.js"></script>
-<script src="app.js"></script>
+<script src="test_app.js"></script>
 </body>
 </html>

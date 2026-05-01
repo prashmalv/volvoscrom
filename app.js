@@ -2,20 +2,31 @@ const video = document.getElementById("video");
 
 // ─── Prevent Skipping ────────────────────────────────────────────
 let lastTime = 0;
+let completionShown = false;
+let videoStarted = false;  // skip-prevention only after video actually starts playing
+
+video.addEventListener("playing", () => { videoStarted = true; });
+
 video.addEventListener("timeupdate", () => {
-  if (video.currentTime > lastTime + 1) {
+  // Apply skip-prevention only after video has begun playing (not during initial load/buffering)
+  if (videoStarted && video.currentTime > lastTime + 1) {
     video.currentTime = lastTime;
   }
   lastTime = video.currentTime;
   handleQuiz(video.currentTime);
+
+  // Fallback completion: triggers if 'ended' event doesn't fire (LMS iframe quirk)
+  if (!completionShown && video.duration && video.currentTime >= video.duration - 2) {
+    showThankYou();
+  }
 });
 
 // ─── Quiz Data ───────────────────────────────────────────────────
 // Each section: triggerTime (seconds), sectionStart (replay point), questions array
 const quizSections = [
   {
-    triggerTime: 67,        // 1:07
-    sectionStart: 0,
+    triggerTime: 67,        // 1:06
+    sectionStart: 40,       // fail hone par 0:40 se replay
     questions: [
       {
         text: "After logging into the DASH Portal, where do you click to navigate to the Purchase Order section?",
@@ -30,7 +41,7 @@ const quizSections = [
     ]
   },
   {
-    triggerTime: 93,        // 1:33 — Q2 + Q3 same section
+    triggerTime: 93,        // 1:30 — Q2 + Q3 same section
     sectionStart: 67,       // fail hone par 1:07 se replay
     questions: [
       {
@@ -56,7 +67,7 @@ const quizSections = [
     ]
   },
   {
-    triggerTime: 133,       // 2:13
+    triggerTime: 133,       // 2:11 (2*60+11=131, using 133 for buffer)
     sectionStart: 93,       // fail hone par 1:33 se replay
     questions: [
       {
@@ -72,7 +83,7 @@ const quizSections = [
     ]
   },
   {
-    triggerTime: 151,       // 2:31
+    triggerTime: 149,       // 2:29
     sectionStart: 133,      // fail hone par 2:13 se replay
     questions: [
       {
@@ -88,7 +99,7 @@ const quizSections = [
     ]
   },
   {
-    triggerTime: 190,       // 3:10
+    triggerTime: 189,       // 3:09
     sectionStart: 151,      // fail hone par 2:31 se replay
     questions: [
       {
@@ -314,19 +325,67 @@ function hideFeedback() {
   banner.textContent = "";
 }
 
-// ─── Completion ───────────────────────────────────────────────────
-video.addEventListener("ended", () => {
+// ─── Custom Fullscreen (entire player-wrapper, not just video) ────
+const playerWrapper = document.getElementById("playerWrapper");
+
+function toggleFullscreen() {
+  const fsEl = document.fullscreenElement || document.webkitFullscreenElement;
+  if (!fsEl) {
+    (playerWrapper.requestFullscreen || playerWrapper.webkitRequestFullscreen)
+      .call(playerWrapper);
+  } else {
+    (document.exitFullscreen || document.webkitExitFullscreen)
+      .call(document);
+  }
+}
+
+// Update fullscreen button icon on change
+document.addEventListener("fullscreenchange", updateFsIcon);
+document.addEventListener("webkitfullscreenchange", updateFsIcon);
+
+function updateFsIcon() {
+  const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+  const icon = document.getElementById("fsIcon");
+  if (!icon) return;
+  icon.innerHTML = isFs
+    ? '<path d="M5.5 0h-4v4h1.5v-2.5h2.5v-1.5zm5 0h4v4h-1.5v-2.5h-2.5v-1.5zm-5 16h-4v-4h1.5v2.5h2.5v1.5zm9-4h-1.5v2.5h-2.5v1.5h4v-4z"/>'
+    : '<path d="M1.5 1h4v1.5h-2.5v2.5h-1.5v-4zm9 0h4v4h-1.5v-2.5h-2.5v-1.5zm-9 9h1.5v2.5h2.5v1.5h-4v-4zm11.5 2.5v-2.5h1.5v4h-4v-1.5h2.5z"/>';
+}
+
+// ─── Completion + Thank You Screen ───────────────────────────────
+function showThankYou() {
+  if (completionShown) return;
+  completionShown = true;
+  video.pause();
+  document.getElementById("thankYouScreen").classList.remove("hidden");
   if (typeof markComplete === "function") markComplete();
-});
+}
+
+video.addEventListener("ended", showThankYou);
 
 // ─── Visibility / Focus Guard ─────────────────────────────────────
 let awayTimer = null;
+let pausedByVisibility = false;
+
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) {
+    // Pause immediately when tab is hidden / window minimised / app switched
+    if (!video.paused && !completionShown) {
+      video.pause();
+      pausedByVisibility = true;
+    }
     awayTimer = setTimeout(() => {
       if (typeof markIncomplete === "function") markIncomplete();
     }, 5000);
   } else {
     clearTimeout(awayTimer);
+    // Resume only if we paused it and no quiz is currently showing
+    const quizActive = document.getElementById("quizOverlay").classList.contains("active");
+    if (pausedByVisibility && !completionShown && !quizActive) {
+      pausedByVisibility = false;
+      video.play().catch(() => {});
+    } else {
+      pausedByVisibility = false;
+    }
   }
 });

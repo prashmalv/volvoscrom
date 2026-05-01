@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SCORM Debug – DASH Portal Training</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; background: #1a1a2e; color: #e0e0e0; padding: 20px; min-height: 100vh; }
+    .card { background: #16213e; border-radius: 12px; padding: 24px; max-width: 700px; margin: 0 auto; }
+    h1 { font-size: 18px; color: #f0c040; margin-bottom: 4px; }
+    .subtitle { font-size: 12px; color: #888; margin-bottom: 20px; }
+    .status-box { background: #0f3460; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+    .status-label { font-size: 12px; color: #aaa; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
+    .api-status { font-size: 20px; font-weight: bold; }
+    .api-found { color: #4ade80; }
+    .api-missing { color: #f87171; }
+    .log-box { background: #0a0a1a; border-radius: 8px; padding: 14px; height: 260px; overflow-y: auto; font-family: monospace; font-size: 12px; margin-bottom: 16px; border: 1px solid #333; }
+    .log-line { padding: 2px 0; border-bottom: 1px solid #1a1a2e; }
+    .log-ok { color: #4ade80; }
+    .log-err { color: #f87171; }
+    .log-info { color: #60a5fa; }
+    .log-warn { color: #f0c040; }
+    .btn { display: block; width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-bottom: 10px; transition: opacity 0.2s; }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-complete { background: #4ade80; color: #000; }
+    .btn-reset { background: #60a5fa; color: #000; }
+    .result-banner { display: none; background: #052e16; border: 2px solid #4ade80; border-radius: 8px; padding: 16px; text-align: center; margin-bottom: 16px; }
+    .result-banner.show { display: block; }
+    .result-banner h2 { color: #4ade80; margin-bottom: 6px; }
+    .result-banner p { color: #aaa; font-size: 13px; }
+    .steps { font-size: 12px; color: #888; line-height: 1.8; }
+    .steps b { color: #f0c040; }
+  </style>
+</head>
+<body>
+<div class="card">
+  <h1>SCORM Debug Tool — DASH Portal Training</h1>
+  <p class="subtitle">This page tests SAP SuccessFactors SCORM API connectivity and completion tracking.</p>
+
+  <div class="status-box">
+    <div class="status-label">SCORM API Status</div>
+    <div class="api-status" id="apiStatus">Checking…</div>
+  </div>
+
+  <div class="result-banner" id="resultBanner">
+    <h2>✓ Completion Sent to LMS</h2>
+    <p>Status "passed" has been committed and session closed.<br>
+       Check SAP SuccessFactors — the item should now show as complete.</p>
+  </div>
+
+  <div class="log-box" id="logBox">
+    <div class="log-line log-info">Initialising…</div>
+  </div>
+
+  <button class="btn btn-complete" id="btnComplete" onclick="doComplete()" disabled>
+    ▶ Mark as Complete (Test)
+  </button>
+  <button class="btn btn-reset" onclick="location.reload()">↺ Reload Page</button>
+
+  <div class="steps">
+    <b>Instructions for tester:</b><br>
+    1. Open this module in SAP SuccessFactors.<br>
+    2. Check the API status shown above — it must say <b>FOUND</b>.<br>
+    3. Click <b>Mark as Complete</b>.<br>
+    4. Close the module window/tab.<br>
+    5. Check your SAP SF transcript — the item should show as <b>Passed / Completed</b>.<br>
+    6. Screenshot the log and share it if completion still doesn't register.
+  </div>
+</div>
+
+<script src="debug_scorm.js"></script>
+</body>
+</html>
