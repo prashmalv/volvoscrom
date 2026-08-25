@@ -24,17 +24,27 @@ video.addEventListener("loadedmetadata", () => {
 // Driven by the 'seeking' event, not by timeupdate gaps: a buffering
 // stall can gap timeupdate by over a second, and inferring a skip from
 // that would yank an honest learner backwards.
-let correctingSeek = false;
-
-video.addEventListener("seeking", () => {
-  if (correctingSeek) return;                 // this is our own correction
+//
+// No "am I already correcting?" flag here. A flag like that has to be
+// cleared on 'seeked', which leaves the lock open for the whole time our
+// own correction is in flight — and a learner clicking the scrub bar a
+// few times in a row lands a seek inside that window and sails straight
+// past. The comparison below is self-limiting instead: our correction
+// seeks to maxWatched, which fails the test, so it never recurses.
+function clampSeek() {
   if (video.currentTime > maxWatched + 1.5) {
-    correctingSeek = true;
     video.currentTime = maxWatched;
+    return true;
   }
-});
+  return false;
+}
 
-video.addEventListener("seeked", () => { correctingSeek = false; });
+video.addEventListener("seeking", clampSeek);
+
+// Second line of defence: if a seek settles past the ceiling anyway —
+// coalesced events, a browser that fires 'seeking' only once for a burst —
+// pull it back once it has landed.
+video.addEventListener("seeked", clampSeek);
 
 video.addEventListener("timeupdate", () => {
   // Never let a seek in flight advance the furthest-watched mark.
