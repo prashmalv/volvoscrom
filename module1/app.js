@@ -10,6 +10,21 @@ let quizStarted    = false;
 let maxWatched     = 0;       // furthest point actually reached (rewind allowed)
 let lastBookmark   = 0;       // last position written to the LMS
 
+// ─── Playback speed lock ─────────────────────────────────────────
+// controlsList="noplaybackrate" only hides Chrome's speed menu. Safari
+// on macOS ignores controlsList altogether and offers speed control in
+// its own menu, which let learners run the module at 2x and "finish" it
+// in half the time. Browser chrome can't be relied on, so pin the rate
+// on the element itself — that holds whatever UI, shortcut or extension
+// tries to change it.
+video.defaultPlaybackRate = 1;
+
+video.addEventListener("ratechange", () => {
+  // Self-limiting: the assignment fires ratechange again, but the rate
+  // is already 1 by then and the branch is skipped.
+  if (video.playbackRate !== 1) video.playbackRate = 1;
+});
+
 // ─── Resume from bookmark ────────────────────────────────────────
 video.addEventListener("loadedmetadata", () => {
   const saved = (typeof scormGetLocation === "function") ? scormGetLocation() : 0;
