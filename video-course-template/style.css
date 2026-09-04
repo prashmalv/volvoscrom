@@ -1,0 +1,320 @@
+/* ─────────────────────────────────────────────────────────────────
+   Video-only SCORM course player
+   Same visual language as the Password Hygiene module, minus the
+   assessment styles.
+   ───────────────────────────────────────────────────────────────── */
+:root {
+  --red:        rgb(255, 51, 51);
+  --light-blue: rgb(0, 153, 204);
+  --dark-blue:  rgb(0, 51, 153);
+  --gray:       rgb(94, 94, 97);
+  --white:      #ffffff;
+  --bg:         #eef2f8;
+  --green:      #22c55e;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding: 4px 16px;
+}
+
+.hidden { display: none !important; }
+
+/* ── Top bar ──────────────────────────────────────────────────── */
+.top-bar {
+  width: 82%;
+  max-width: 960px;
+  padding: 4px 0 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.top-logo {
+  height: 150px;
+  width: auto;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.heading-divider {
+  width: 1.5px;
+  height: 60px;
+  background: var(--gray);
+  opacity: 0.4;
+  margin: 0 18px;
+  flex-shrink: 0;
+}
+
+.course-heading {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--dark-blue);
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+/* ── Player ───────────────────────────────────────────────────── */
+.player-wrapper {
+  width: 82%;
+  max-width: 960px;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 51, 153, 0.18);
+  position: relative;
+}
+
+.player-header {
+  background: var(--dark-blue);
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-brand {
+  color: var(--white);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-tag {
+  color: var(--white);
+  font-size: 12px;
+  font-weight: 600;
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  border-radius: 30px;
+  padding: 5px 14px;
+  letter-spacing: 0.4px;
+}
+
+.fs-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  border-radius: 8px;
+  color: var(--white);
+  cursor: pointer;
+  transition: background 0.18s;
+}
+
+.fs-btn:hover { background: rgba(255, 255, 255, 0.28); }
+
+.video-container {
+  position: relative;
+  background: #000;
+  line-height: 0;
+}
+
+.video-container video { display: block; }
+
+/* ── Watch-progress bar ───────────────────────────────────────── */
+.progress-track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.18);
+  z-index: 5;
+  pointer-events: none;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--light-blue);
+  transition: width 0.25s linear;
+}
+
+/* ── Fullscreen ───────────────────────────────────────────────── */
+.player-wrapper:fullscreen,
+.player-wrapper:-webkit-full-screen {
+  width: 100%;
+  max-width: 100%;
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.player-wrapper:fullscreen .video-container,
+.player-wrapper:-webkit-full-screen .video-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.player-wrapper:fullscreen video,
+.player-wrapper:-webkit-full-screen video {
+  height: 100%;
+  object-fit: contain;
+}
+
+/* ── Completion screen ────────────────────────────────────────── */
+.overlay-screen {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(145deg, var(--dark-blue) 0%, rgb(0, 80, 180) 100%);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.overlay-card {
+  text-align: center;
+  color: var(--white);
+  max-width: 520px;
+  margin: auto;
+  animation: slideUp 0.4s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(28px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.overlay-icon {
+  width: 72px;
+  height: 72px;
+  background: var(--green);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: 700;
+  margin: 0 auto 20px;
+  box-shadow: 0 4px 20px rgba(34, 197, 94, 0.4);
+}
+
+.overlay-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  letter-spacing: 0.5px;
+}
+
+.overlay-sub {
+  font-size: 15px;
+  opacity: 0.8;
+  margin-bottom: 4px;
+}
+
+.overlay-course {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--light-blue);
+  margin-bottom: 18px;
+  letter-spacing: 0.3px;
+}
+
+.overlay-msg {
+  font-size: 14px;
+  opacity: 0.8;
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+
+.completion-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  border-radius: 30px;
+  padding: 9px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  margin-bottom: 20px;
+}
+
+.primary-btn {
+  display: block;
+  margin: 0 auto;
+  background: var(--white);
+  color: var(--dark-blue);
+  border: none;
+  padding: 13px 36px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.3px;
+  transition: background 0.18s, color 0.18s, transform 0.12s;
+}
+
+.primary-btn:hover {
+  background: var(--light-blue);
+  color: var(--white);
+  transform: translateY(-2px);
+}
+
+/* Keyboard focus must stay visible (WCAG AA) */
+.primary-btn:focus-visible,
+.fs-btn:focus-visible {
+  outline: 3px solid var(--light-blue);
+  outline-offset: 2px;
+}
+
+/* ── Responsive ───────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  body { padding: 4px 8px; }
+
+  .top-bar, .player-wrapper { width: 100%; }
+
+  /* The course title is long and .course-heading is nowrap, which would
+     push the logo off-screen and give the page a horizontal scrollbar. */
+  .top-bar {
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 4px 0 6px;
+  }
+  .top-logo        { height: 56px; }
+  .heading-divider { height: 26px; margin: 0 10px; }
+  .course-heading  {
+    white-space: normal;
+    text-align: center;
+    font-size: 15px;
+    line-height: 1.35;
+  }
+
+  .player-header  { padding: 10px 14px; }
+  .header-brand   { font-size: 13px; }
+  .header-tag     { font-size: 11px; padding: 4px 10px; }
+
+  .overlay-screen { position: fixed; padding: 14px; }
+  .overlay-title  { font-size: 21px; }
+  .overlay-icon   { width: 56px; height: 56px; font-size: 28px; }
+  .primary-btn    { width: 100%; }
+}
+
+@media (max-width: 560px) {
+  /* Too narrow to sit side by side — stack the lockup instead. */
+  .top-bar         { flex-direction: column; gap: 6px; }
+  .heading-divider { display: none; }
+  .top-logo        { height: 46px; }
+  .course-heading  { font-size: 14px; }
+  .header-tag      { display: none; }
+}

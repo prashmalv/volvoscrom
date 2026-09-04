@@ -1,2 +1,8 @@
 content/
 images/
+
+# Built SCORM packages — generated from video-course-template/ by
+# build_video_course.py, and far too large to track.
+*_SCORM.zip
+/engineoil-full-sample/
+/engineoil-sample-2/
