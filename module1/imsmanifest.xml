@@ -27,6 +27,8 @@
       <file href="index.html"/>
       <file href="app.js"/>
       <file href="questions.js"/>
+      <file href="player.js"/>
+      <file href="player.css"/>
       <file href="scorm.js"/>
       <file href="style.css"/>
       <file href="content/VCPL_C1_M1_PasswordHygiene.mp4"/>

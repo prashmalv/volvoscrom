@@ -3,96 +3,24 @@
 //  Video first, then a 5-question END-of-module assessment drawn at
 //  random from the 11-question pool in questions.js.
 // ─────────────────────────────────────────────────────────────────
-const video = document.getElementById("video");
+// player.js owns playback: custom control bar (no speed control on any
+// browser), seek-forward lock, rate lock, watched-time gate, bookmark.
+// This file is the assessment on top of it.
 
-let videoWatched   = false;   // ≥95% viewed
-let quizStarted    = false;
-let maxWatched     = 0;       // furthest point actually reached (rewind allowed)
-let lastBookmark   = 0;       // last position written to the LMS
+let videoWatched = false;   // set once player.js says the video was watched
+let quizStarted  = false;
 
-// ─── Playback speed lock ─────────────────────────────────────────
-// controlsList="noplaybackrate" only hides Chrome's speed menu. Safari
-// on macOS ignores controlsList altogether and offers speed control in
-// its own menu, which let learners run the module at 2x and "finish" it
-// in half the time. Browser chrome can't be relied on, so pin the rate
-// on the element itself — that holds whatever UI, shortcut or extension
-// tries to change it.
-video.defaultPlaybackRate = 1;
+// Called by player.js once the video is genuinely watched — far enough
+// along the timeline AND for enough real seconds.
+window.onVideoComplete = function () {
+  videoWatched = true;
+  beginAssessment();
+};
 
-video.addEventListener("ratechange", () => {
-  // Self-limiting: the assignment fires ratechange again, but the rate
-  // is already 1 by then and the branch is skipped.
-  if (video.playbackRate !== 1) video.playbackRate = 1;
-});
-
-// ─── Resume from bookmark ────────────────────────────────────────
-video.addEventListener("loadedmetadata", () => {
-  const saved = (typeof scormGetLocation === "function") ? scormGetLocation() : 0;
-  if (saved > 5 && saved < video.duration - 5) {
-    maxWatched        = saved;   // set first — the seek lock reads it
-    lastBookmark      = saved;
-    video.currentTime = saved;
-  }
-});
-
-// ─── Seek-forward lock (rewind and re-watch stay allowed) ────────
-// Driven by the 'seeking' event, not by timeupdate gaps: a buffering
-// stall can gap timeupdate by over a second, and inferring a skip from
-// that would yank an honest learner backwards.
-//
-// No "am I already correcting?" flag here. A flag like that has to be
-// cleared on 'seeked', which leaves the lock open for the whole time our
-// own correction is in flight — and a learner clicking the scrub bar a
-// few times in a row lands a seek inside that window and sails straight
-// past. The comparison below is self-limiting instead: our correction
-// seeks to maxWatched, which fails the test, so it never recurses.
-function clampSeek() {
-  if (video.currentTime > maxWatched + 1.5) {
-    video.currentTime = maxWatched;
-    return true;
-  }
-  return false;
-}
-
-video.addEventListener("seeking", clampSeek);
-
-// Second line of defence: if a seek settles past the ceiling anyway —
-// coalesced events, a browser that fires 'seeking' only once for a burst —
-// pull it back once it has landed.
-video.addEventListener("seeked", clampSeek);
-
-video.addEventListener("timeupdate", () => {
-  // Never let a seek in flight advance the furthest-watched mark.
-  if (!video.seeking && video.currentTime > maxWatched) maxWatched = video.currentTime;
-
-  updateProgress();
-
-  if (!videoWatched && video.duration &&
-      maxWatched >= video.duration * QUIZ_CONFIG.videoCompleteAt) {
-    videoWatched = true;
-  }
-
-  // Bookmark every 10s. timeupdate fires ~4x/sec, so guard on the last
-  // saved position — an LMS Commit per event would hammer SAP needlessly.
-  if (typeof scormSetLocation === "function" && video.currentTime - lastBookmark >= 10) {
-    lastBookmark = video.currentTime;
-    scormSetLocation(video.currentTime);
-  }
-
-  // Fallback: some LMS iframes swallow the 'ended' event
-  if (!quizStarted && video.duration && video.currentTime >= video.duration - 0.5) {
-    beginAssessment();
-  }
-});
-
-video.addEventListener("ended", beginAssessment);
-
-function updateProgress() {
-  if (!video.duration) return;
-  const pct = Math.min(100, (maxWatched / video.duration) * 100);
-  const bar = document.getElementById("progressFill");
-  if (bar) bar.style.width = pct.toFixed(1) + "%";
-}
+// player.js asks before auto-resuming after a tab switch.
+window.playerResumeBlocked = function () {
+  return quizStarted;
+};
 
 // ─── Assessment state ────────────────────────────────────────────
 let quizSet       = [];   // the 5 delivered questions, options already shuffled
@@ -136,8 +64,6 @@ function buildQuizSet() {
 function beginAssessment() {
   if (quizStarted) return;
   quizStarted = true;
-  videoWatched = true;              // reaching the end counts as viewed
-  video.pause();
   if (typeof scormSetLocation === "function") scormSetLocation(0);
   document.querySelector(".video-container").classList.add("quiz-mode");
   document.getElementById("introScreen").classList.remove("hidden");
@@ -376,13 +302,11 @@ function relaunchCourse() {
   quizSet       = [];
   currentQIndex = 0;
   correctCount  = 0;
-  maxWatched    = 0;     // reset before the seek, so the lock re-arms
-  lastBookmark  = 0;
 
   if (typeof markIncomplete === "function") markIncomplete();
   if (typeof scormSetLocation === "function") scormSetLocation(0);
 
-  video.currentTime = 0;   // a rewind — the seek lock allows it
+  resetPlayer();           // clears the seek ceiling and the watched-time credit
   video.play().catch(() => {});
 }
 
@@ -424,27 +348,3 @@ function updateFsIcon() {
     ? '<path d="M5.5 0h-4v4h1.5v-2.5h2.5v-1.5zm5 0h4v4h-1.5v-2.5h-2.5v-1.5zm-5 16h-4v-4h1.5v2.5h2.5v1.5zm9-4h-1.5v2.5h-2.5v1.5h4v-4z"/>'
     : '<path d="M1.5 1h4v1.5h-2.5v2.5h-1.5v-4zm9 0h4v4h-1.5v-2.5h-2.5v-1.5zm-9 9h1.5v2.5h2.5v1.5h-4v-4zm11.5 2.5v-2.5h1.5v4h-4v-1.5h2.5z"/>';
 }
-
-// ─── Pause when the learner switches tab / minimises ─────────────
-let awayTimer = null;
-let pausedByVisibility = false;
-
-document.addEventListener("visibilitychange", () => {
-  if (document.hidden) {
-    if (!video.paused && !quizStarted) {
-      video.pause();
-      pausedByVisibility = true;
-    }
-    awayTimer = setTimeout(() => {
-      if (typeof markIncomplete === "function") markIncomplete();
-    }, 5000);
-  } else {
-    clearTimeout(awayTimer);
-    if (pausedByVisibility && !quizStarted) {
-      pausedByVisibility = false;
-      video.play().catch(() => {});
-    } else {
-      pausedByVisibility = false;
-    }
-  }
-});

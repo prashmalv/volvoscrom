@@ -126,25 +126,6 @@ body {
 
 .video-container video { display: block; }
 
-/* ── Watch-progress bar ───────────────────────────────────────── */
-.progress-track {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 4px;
-  background: rgba(255, 255, 255, 0.18);
-  z-index: 5;
-  pointer-events: none;
-}
-
-.progress-fill {
-  height: 100%;
-  width: 0%;
-  background: var(--light-blue);
-  transition: width 0.25s linear;
-}
-
 /* ── Fullscreen ───────────────────────────────────────────────── */
 .player-wrapper:fullscreen,
 .player-wrapper:-webkit-full-screen {

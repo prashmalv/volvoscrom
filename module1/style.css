@@ -706,25 +706,6 @@ video {
   border-color: var(--white);
 }
 
-/* ── Video watch-progress bar ────────────────────────────────── */
-.progress-track {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 4px;
-  background: rgba(255, 255, 255, 0.18);
-  z-index: 5;
-  pointer-events: none;
-}
-
-.progress-fill {
-  height: 100%;
-  width: 0%;
-  background: var(--light-blue);
-  transition: width 0.25s linear;
-}
-
 /* ── Quiz progress dots (question n of 5) ────────────────────── */
 .quiz-dots {
   display: flex;
@@ -786,7 +767,7 @@ video {
 }
 
 .video-container.quiz-mode video,
-.video-container.quiz-mode .progress-track { display: none; }
+.video-container.quiz-mode .vc-bar { display: none; }
 
 .video-container.quiz-mode .quiz-overlay {
   position: relative;

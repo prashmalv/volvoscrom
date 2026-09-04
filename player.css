@@ -1,0 +1,139 @@
+/* ─────────────────────────────────────────────────────────────────
+   Shared course video control bar (built by player.js)
+   The native controls are removed, so this bar is the only playback UI
+   — and deliberately offers no speed control on any browser.
+   ───────────────────────────────────────────────────────────────── */
+.vc-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: #0b1220;
+  line-height: normal;
+}
+
+.vc-btn {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.12);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.16s;
+}
+
+.vc-btn:hover { background: rgba(255, 255, 255, 0.24); }
+.vc-btn.muted { opacity: 0.55; }
+
+/* ── Seek bar ─────────────────────────────────────────────────── */
+.vc-seek {
+  flex: 1;
+  min-width: 60px;
+  padding: 10px 0;      /* generous hit area without a thick visual bar */
+  cursor: pointer;
+  touch-action: none;   /* let pointermove scrub instead of scrolling */
+}
+
+.vc-seek-track {
+  position: relative;
+  height: 5px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.22);
+}
+
+/* How far the learner has ever watched — this is also how far they may
+   scrub back to. */
+.vc-seek-watched {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0%;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.34);
+}
+
+.vc-seek-played {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0%;
+  border-radius: 3px;
+  background: var(--light-blue, #0099cc);
+}
+
+.vc-seek-knob {
+  position: absolute;
+  top: 50%;
+  left: 0%;
+  width: 13px;
+  height: 13px;
+  margin-left: -6.5px;
+  border-radius: 50%;
+  background: #fff;
+  transform: translateY(-50%);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+.vc-seek:focus-visible { outline: none; }
+.vc-seek:focus-visible .vc-seek-track {
+  outline: 3px solid var(--light-blue, #0099cc);
+  outline-offset: 4px;
+}
+
+.vc-time {
+  flex-shrink: 0;
+  min-width: 92px;
+  text-align: right;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.3px;
+}
+
+/* ── Volume ───────────────────────────────────────────────────── */
+.vc-vol {
+  flex-shrink: 0;
+  width: 84px;
+  height: 5px;
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.28);
+  cursor: pointer;
+}
+
+.vc-vol::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 13px;
+  height: 13px;
+  border: none;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+}
+
+.vc-vol::-moz-range-thumb {
+  width: 13px;
+  height: 13px;
+  border: none;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+}
+
+.vc-vol:focus-visible { outline: 3px solid var(--light-blue, #0099cc); outline-offset: 3px; }
+
+.vc-btn:focus-visible { outline: 3px solid var(--light-blue, #0099cc); outline-offset: 2px; }
+
+@media (max-width: 768px) {
+  .vc-bar  { gap: 8px; padding: 8px 10px; }
+  .vc-time { min-width: 78px; font-size: 12px; }
+  .vc-vol  { display: none; }   /* device volume keys cover this */
+}

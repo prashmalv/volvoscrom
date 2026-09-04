@@ -6,6 +6,7 @@
   <title>{{TITLE}}</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="player.css">
 </head>
 <body>
 
@@ -46,17 +47,20 @@
   </div>
 
   <div class="video-container">
-    <video id="video" width="100%" controls playsinline
-      controlsList="nodownload noplaybackrate nofullscreen">
+    <!-- No `controls` attribute: player.js draws the control bar, so no
+         browser's own menu (and its speed control) is ever exposed. -->
+    <video id="video" width="100%" playsinline
+      controlsList="nodownload noplaybackrate nofullscreen"
+      disablepictureinpicture disableremoteplayback>
       <source src="content/{{VIDEO}}" type="video/mp4">
       Your browser does not support HTML5 video.
     </video>
-    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
   </div>
 
 </div>
 
 <script src="scorm.js"></script>
+<script src="player.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

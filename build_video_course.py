@@ -9,6 +9,9 @@ import os, re, shutil, subprocess, sys, xml.etree.ElementTree as ET
 ROOT     = os.path.dirname(os.path.abspath(__file__))
 TEMPLATE = os.path.join(ROOT, "video-course-template")
 LOGO     = os.path.join(ROOT, "images", "logo", "GBL_VALVOLINE_LOGO_HORIZONTAL_RGB.png")
+# Playback behaviour is shared with the other packages, so it lives at the
+# repo root rather than being duplicated per template.
+SHARED   = ["player.js", "player.css"]
 NS       = "{http://www.imsproject.org/xsd/imscp_rootv1p1p2}"
 
 
@@ -30,6 +33,9 @@ def build(out_dir, video_src, ident, title, brand):
         left = re.findall(r"\{\{[A-Z_]+\}\}", text)
         assert not left, f"{name}: unreplaced tokens {set(left)}"
         open(os.path.join(out_dir, name), "w", encoding="utf-8").write(text)
+
+    for name in SHARED:
+        shutil.copy2(os.path.join(ROOT, name), os.path.join(out_dir, name))
 
     shutil.copy2(video_src, os.path.join(out_dir, "content", video))
     shutil.copy2(LOGO, os.path.join(out_dir, "images", "logo", os.path.basename(LOGO)))
