@@ -75,11 +75,28 @@ window.playerResumeBlocked = function () {
   return quizStarted;
 };
 
+/**
+ * What a retake actually gives the learner.
+ *
+ * Only true when the pool is bigger than what is delivered. A module whose
+ * pool is exactly the delivery count shows the same questions again in a new
+ * order — promising "a fresh set" there is a claim the learner disproves on
+ * their second attempt.
+ */
+function redrawPhrase() {
+  return QUESTION_POOL.length > QUIZ_CONFIG.deliverCount
+    ? "a fresh set is drawn each attempt"
+    : "the questions are reordered each attempt";
+}
+
 function showIntro() {
   const left = attemptsLeft();
   document.getElementById("introAttempts").textContent = left === QUIZ_CONFIG.maxAttempts
     ? QUIZ_CONFIG.maxAttempts + " attempts in total"
     : left + " of " + QUIZ_CONFIG.maxAttempts + " attempts remaining";
+
+  const redraw = document.getElementById("introRedraw");
+  if (redraw) redraw.textContent = " — " + redrawPhrase();
 
   const startBtn = document.getElementById("startBtn");
   if (left === 0) {
@@ -274,7 +291,7 @@ function finishQuiz() {
       "You scored " + percent + "%, below the " + QUIZ_CONFIG.passPercent +
       "% needed to pass (" + needed + " of " + total + " correct). You have " +
       left + (left === 1 ? " attempt" : " attempts") +
-      " left — a fresh set of questions is drawn each time.";
+      " left — " + redrawPhrase() + ".";
   } else {
     document.getElementById("resultTitle").textContent = "No attempts remaining";
     document.getElementById("resultMsg").textContent =

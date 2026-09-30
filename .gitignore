@@ -21,3 +21,13 @@ __pycache__/
 /module2/quiz.js
 /module2/quiz.css
 /module2/scorm.js
+/meeting-physical/player.js
+/meeting-physical/player.css
+/meeting-physical/quiz.js
+/meeting-physical/quiz.css
+/meeting-physical/scorm.js
+/meeting-online/player.js
+/meeting-online/player.css
+/meeting-online/quiz.js
+/meeting-online/quiz.css
+/meeting-online/scorm.js
