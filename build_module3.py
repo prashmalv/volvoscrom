@@ -14,6 +14,8 @@ ZIP    = os.path.join(ROOT, "VCPL_C1_M3_PublicWiFi_SCORM.zip")
 VIDEO  = os.path.join(ROOT, "content", "SepSandeepTeam", "web", "VCPL_C1_M3_PublicWiFi.mp4")
 LOGO   = os.path.join(ROOT, "images", "logo", "GBL_VALVOLINE_LOGO_HORIZONTAL_RGB.png")
 SHARED = ["player.js", "player.css", "quiz.js", "quiz.css"]
+# The SCORM adapter is shared too, but lands under the name the page loads.
+SHARED_AS = {"scorm-quiz.js": "scorm.js"}
 
 sys.path.insert(0, ROOT)
 from build_video_course import verify   # same package checks as the other builds
@@ -22,6 +24,8 @@ from build_video_course import verify   # same package checks as the other build
 def main():
     for name in SHARED:
         shutil.copy2(os.path.join(ROOT, name), os.path.join(PKG, name))
+    for src, dst in SHARED_AS.items():
+        shutil.copy2(os.path.join(ROOT, src), os.path.join(PKG, dst))
 
     os.makedirs(os.path.join(PKG, "content"), exist_ok=True)
     os.makedirs(os.path.join(PKG, "images", "logo"), exist_ok=True)

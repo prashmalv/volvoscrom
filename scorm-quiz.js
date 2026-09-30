@@ -1,5 +1,9 @@
 // ─────────────────────────────────────────────────────────────────
-//  SCORM runtime adapter — VCPL C1/M3 Public Wi-Fi
+//  SCORM runtime adapter for the quiz-bearing modules
+//
+//  Nothing here is course-specific: the build copies it into each package
+//  as scorm.js, so reporting behaves identically across modules.
+//
 //  Speaks SCORM 1.2 (cmi.core.*) and falls back to SCORM 2004
 //  (API_1484_11) if that is the only API the LMS exposes.
 //  API discovery covers SAP SuccessFactors, which opens content
