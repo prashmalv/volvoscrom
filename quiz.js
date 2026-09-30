@@ -91,9 +91,16 @@ function redrawPhrase() {
 
 function showIntro() {
   const left = attemptsLeft();
-  document.getElementById("introAttempts").textContent = left === QUIZ_CONFIG.maxAttempts
-    ? QUIZ_CONFIG.maxAttempts + " attempts in total"
-    : left + " of " + QUIZ_CONFIG.maxAttempts + " attempts remaining";
+
+  // Both optional. The simplified intro drops the mechanics, but a module
+  // that still lists them keeps working — and a missing element must not
+  // throw on the way into the assessment.
+  const attemptsEl = document.getElementById("introAttempts");
+  if (attemptsEl) {
+    attemptsEl.textContent = left === QUIZ_CONFIG.maxAttempts
+      ? QUIZ_CONFIG.maxAttempts + " attempts in total"
+      : left + " of " + QUIZ_CONFIG.maxAttempts + " attempts remaining";
+  }
 
   const redraw = document.getElementById("introRedraw");
   if (redraw) redraw.textContent = " — " + redrawPhrase();

@@ -194,6 +194,10 @@ video.addEventListener("loadedmetadata", () => {
 // route someone finds to change the rate.
 function tick() {
   const now = Date.now();
+  if (video.currentTime !== lastPos) {
+    lastPos = video.currentTime;
+    lastPosAt = now;
+  }
   if (!video.paused && !video.seeking && lastTick !== null) {
     const delta = (now - lastTick) / 1000;
     if (delta > 0 && delta < 2) playedSeconds += delta;   // ignore tab-throttled gaps
@@ -230,8 +234,42 @@ function watchedEnough() {
          playedSeconds >= video.duration * PLAYER_CONFIG.minWatchRatio;
 }
 
+/**
+ * Has the video actually finished playing?
+ *
+ * Separate from watchedEnough() on purpose. Crossing the watched threshold
+ * means the module can be counted; it does not mean the video is over. Firing
+ * the handover at 95% swapped the player out with several seconds still to
+ * run, which cut the closing logo animation and the last words of the
+ * voice-over off every course.
+ *
+ * 'ended' is the real signal and is what normally fires. The fallback exists
+ * only for the case where a browser parks on the final frame without ever
+ * firing it, so it waits for playback to genuinely stop advancing rather than
+ * jumping in a fraction early and clipping the tail again.
+ */
+function videoFinished() {
+  if (video.ended) return true;
+  if (!video.duration) return false;
+  // 2.5s, not one: 'ended' is what should fire, and an mp4 whose container
+  // duration runs slightly past its last frame can park the playhead for a
+  // moment first. Beating 'ended' to it would clip the closing audio — the
+  // very thing this fix exists to stop. A player that is genuinely stuck
+  // loses nothing by waiting a second longer.
+  const atTail = video.currentTime >= video.duration - 0.5;
+  return atTail && stalledForMs() > 2500;
+}
+
+// How long the playhead has sat at the same position.
+let lastPos = -1;
+let lastPosAt = 0;
+
+function stalledForMs() {
+  return lastPos < 0 ? 0 : Date.now() - lastPosAt;
+}
+
 function checkComplete() {
-  if (videoComplete || !watchedEnough()) return;
+  if (videoComplete || !videoFinished() || !watchedEnough()) return;
   videoComplete = true;
   video.pause();
   if (typeof window.onVideoComplete === "function") window.onVideoComplete();
