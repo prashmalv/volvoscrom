@@ -53,16 +53,18 @@ const QUESTION_POOL = [
     fbWrong: "Secrecy and urgency together are hallmarks of social engineering."
   },
   {
-    id: "Q5", lo: "LO4",
-    text: "You suspect an email is phishing but aren't fully sure. What should you do?",
+    // Replaced on the client's instruction (8 Oct 2026): the two questions on
+    // reporting via Outlook were dropped, and these supplied in their place.
+    id: "Q5", lo: "LO3",
+    text: "Why do cyber attackers frequently combine a false claim of authority with intense urgency in corporate phishing attempts?",
     options: [
-      { t: "Ignore it and delete it" },
-      { t: "Report it via Outlook's Report Phishing button or flag IT Security, even if unsure", correct: true },
-      { t: "Forward it to a colleague for a second opinion" },
-      { t: "Reply asking the sender to confirm" }
+      { t: "To test the encryption limits of company servers" },
+      { t: "To induce panic and rush your response, preventing you from thinking critically or verifying", correct: true },
+      { t: "To ensure the message is delivered faster across mobile networks" },
+      { t: "To comply with standard IT security audit guidelines" }
     ],
-    fbRight: "Correct — always report, even if unsure.",
-    fbWrong: "It's always better to check than to be sorry."
+    fbRight: "Correct — panic is the point: rushed people skip the check that would expose the request.",
+    fbWrong: "Authority and urgency together are meant to rush you past verifying — that pressure is itself the warning sign."
   },
   {
     id: "Q6", lo: "LO1",
@@ -101,16 +103,16 @@ const QUESTION_POOL = [
     fbWrong: "Secrecy + bypassing process, regardless of who appears to be asking, is a warning sign."
   },
   {
-    id: "Q9", lo: "LO4",
-    text: "Where can you report a suspected phishing email in Outlook?",
+    id: "Q9", lo: "LO1",
+    text: "In the email scenario, what specific warning notice appears on the screen to highlight that the message came from outside the organization?",
     options: [
-      { t: "Only by emailing your manager" },
-      { t: "Using the Report Phishing button in Outlook", correct: true },
-      { t: 'By replying "unsubscribe" to the sender' },
-      { t: "There is no in-app option" }
+      { t: "\u201CWarning: High-risk financial attachment detected\u201D" },
+      { t: "\u201CThis email originated from outside the organization\u201D", correct: true },
+      { t: "\u201CNotice: External sender identity unverified by certificate\u201D" },
+      { t: "\u201CCaution: Internal policy violation warning\u201D" }
     ],
-    fbRight: "Correct.",
-    fbWrong: "Outlook has a built-in Report Phishing button; IT Security is the backup route."
+    fbRight: "Correct — that banner is the system telling you the sender is not internal.",
+    fbWrong: "The banner reads \u201CThis email originated from outside the organization\u201D — a sender claiming to be internal contradicts it."
   },
   {
     id: "Q10", lo: "LO5",
